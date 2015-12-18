@@ -1,23 +1,12 @@
-#' noobomics()
-#'
-#' This function takes, simply, 2 PRE-SORTED (in excel by ID) data frames of condensed RNA and Protein (or generally any pairwise matched datasets) and finds the subset with matched IDs. Then plots distributions, all possible correlation scatterplots, an unscaled heatmap using default distance/clustering methods of aheatmap() from NMF package, and finally plots the PCA as a biplot. 
-#'
-#' @param df1 = First data frame expected in the following csv format with headers (that differentiate between RNA and protein):'ID,wt_rna,mutant1_rna,complemented_rna'
-#' @param df2 = Second data frame expected in the following csv format with headers (that differentiate between RNA and protein):'ID,wt_protein,mutant1_protein,complemented_protein'
-#' @export
-#' 
-#' 
+
+
+
 
 require(RColorBrewer)
 require(graphics)
 require(NMF)
 require(ggbiplot)
 require(stats)
-library(RColorBrewer)
-library(graphics)
-library(NMF)
-library(ggbiplot)
-library(stats)
 
 noobomics <- function(df1, df2){
   #create color spectrum for heatmap
