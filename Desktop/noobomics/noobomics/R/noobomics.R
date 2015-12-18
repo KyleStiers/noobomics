@@ -1,31 +1,26 @@
 #' noobomics()
 #'
-#' This function takes, simply, 2 PRE-SORTED (in excel by ID) data frames of condensed RNA and Protein (or generally any pairwise matched datasets) and finds the subset with matched IDs. Then plots distributions, all possible correlation scatterplots, an unscaled heatmap using default distance/clustering methods of aheatmap() from NMF package, and finally plots the PCA as a biplot. 
+#' This function takes, simply, 2 PRE-SORTED (in excel by ID) data frames of condensed RNA and Protein (or generally any pairwise matched datasets) and finds the subset with matched IDs. Then plots distributions, all possible correlation scatterplots, an unscaled heatmap using default distance/clustering methods of aheatmap() from NMF package, and finally plots the PCA as a biplot.
 #'
 #' @param df1 = First data frame expected in the following csv format with headers (that differentiate between RNA and protein):'ID,wt_rna,mutant1_rna,complemented_rna'
 #' @param df2 = Second data frame expected in the following csv format with headers (that differentiate between RNA and protein):'ID,wt_protein,mutant1_protein,complemented_protein'
 #' @export
-#' 
-#' 
+#'
+#'
 
-require(RColorBrewer)
-require(graphics)
-require(NMF)
-require(ggbiplot)
-require(stats)
-library(RColorBrewer)
-library(graphics)
-library(NMF)
-library(ggbiplot)
-library(stats)
-
+for(package in c('RColorBrewer', 'graphics', 'NMF', 'ggbiplot', 'stats')){
+  if(!require(package, character.only = T, quietly=T)){
+    install.packages(package)
+    library(package, character.only = T)
+  }
+}
 noobomics <- function(df1, df2){
   #create color spectrum for heatmap
   neg_spectrum <- colorRampPalette(brewer.pal(11,'Spectral'))(50)
-  
+
   #environment being set is due to a bug in scope of ggplot2 calls inside of other functions
   environment = environment()
-  
+
   #pre-process data into useable melted together dataframe
   matched_ids <- intersect(df1[,1], df2[,1])
   matched_df1_data <- subset(df1, df1[,1] %in% matched_ids == TRUE)
@@ -45,7 +40,7 @@ noobomics <- function(df1, df2){
   #Histograms with density of distributions
   columns_to_use <- c(3,4,7,8)
   par(mfrow = c(2,2))
-  sapply(columns_to_use, function(i){ 
+  sapply(columns_to_use, function(i){
     title_i <- paste(c("Distribution of Log2(", paste(names(log2_transformed_combined_df[i])), ")"), collapse = "")
     h <- hist(log2_transformed_combined_df[,i],  main = title_i, xlab="Log2(Counts/Reference)", col=i, border="black")
     xfit<-seq(min(log2_transformed_combined_df[,i]),max(log2_transformed_combined_df[,i]),length=40)
@@ -56,7 +51,7 @@ noobomics <- function(df1, df2){
 
   #scatterplots of Pearson CCs
   par(mfrow = c(2,3))
-  sapply(seq(1,3,1), function(i){ 
+  sapply(seq(1,3,1), function(i){
     xrange <- find_plot_range(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+1]])
     yrange <- find_plot_range(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+1]])
     mainlabel <- paste(c(" Pearson \nR=",signif(cor(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+1]], use = "everything", method = "pearson"),4)),collapse="")
@@ -65,7 +60,7 @@ noobomics <- function(df1, df2){
     #legend("topright",legend=paste(c("Pearson CC\nR=",signif(cor(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+1]], use = "everything", method = "pearson"),4)),collapse=""))
     abline(c(0,1), lty=2)
   })
-  sapply(seq(1,2,1), function(i){ 
+  sapply(seq(1,2,1), function(i){
     xrange <- find_plot_range(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+2]])
     yrange <- find_plot_range(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+2]])
     mainlabel <- paste(c(" Pearson \nR=",signif(cor(log2_transformed_combined_df[,columns_to_use[i]],log2_transformed_combined_df[,columns_to_use[i+2]], use = "everything", method = "pearson"),4)),collapse="")
@@ -77,23 +72,22 @@ noobomics <- function(df1, df2){
   mainlabel <- paste(c(" Pearson \nR=",signif(cor(log2_transformed_combined_df[,columns_to_use[1]],log2_transformed_combined_df[,columns_to_use[4]], use = "everything", method = "pearson"),4)),collapse="")
   plot(log2_transformed_combined_df[,columns_to_use[1]],log2_transformed_combined_df[,columns_to_use[4]],col=6,main=mainlabel,xlim=xrange, ylim=yrange,xlab=paste(c("Log2(", paste(names(log2_transformed_combined_df[columns_to_use[1]])), ")"), collapse = ""),ylab=paste(c("Log2(", paste(names(log2_transformed_combined_df[columns_to_use[4]])), ")"), collapse = ""))
   abline(c(0,1), lty=2)
-  
-  #display only 1 plot at a time again, and plot heatmap of results  
+
+  #display only 1 plot at a time again, and plot heatmap of results
   par(mfrow = c(1,1))
   aheatmap(log2_transformed_combined_df[,c(3,4,7,8)],main="Heatmap of Unscaled Log2() Data",scale = 'none',labRow = log2_transformed_combined_df[,1], color = rev(neg_spectrum), cexRow = 1.5,cellwidth = 20, Colv = FALSE)
-  
+
   #calculate principal components and significant labels, eventually significance expression will be user controlled
   log2_transformed_combined_df.pca <- princomp(log2_transformed_combined_df[,c(3,4,7,8)])
   significant_hit_labels <- subset(log2_transformed_combined_df, abs(log2_transformed_combined_df.pca$scores[,1]) > 0.5 & abs(log2_transformed_combined_df.pca$scores[,2]) > 0.5)
   significant_hit_labels_complete <- c(sapply(seq(1,nrow(log2_transformed_combined_df),1), function(i) ifelse(log2_transformed_combined_df[i,1] %in% significant_hit_labels[,1], yes=as.vector(log2_transformed_combined_df[i,1]), no="*")))
-  
+
   #plot the biplot in a nicely formatted way
   ggbiplot(pcobj = log2_transformed_combined_df.pca, environment = environment(), scale=1, obs.scale=1, circle=T, labels=significant_hit_labels_complete,labels.size = 3, varname.size = 5)+
     theme(panel.background = element_rect(fill="white",colour = "black"))+
     scale_x_continuous(limits = c(range(log2_transformed_combined_df.pca$scores[,1])[1]-0.5,range(log2_transformed_combined_df.pca$scores[,1])[2]+0.5))+
     scale_y_continuous(limits = c(range(log2_transformed_combined_df.pca$scores[,2])[1]-0.5,range(log2_transformed_combined_df.pca$scores[,2])[2]+0.5))+
     labs(title="Principal Component Analysis of Log2 Transformed Data")
-  
 }
 
 
