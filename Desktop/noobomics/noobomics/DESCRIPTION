@@ -1,9 +1,7 @@
-Package: noobomics
-Version: 0.1
-Title: Simplified Exploratory Pairwise RNA and Proteomic Data Analysis
-Authors@R: c(person(“Kyle”, “Stiers”, email = “kylestiers@gmail.com", role = c("aut", "cre”)))
-Author: Kyle Stiers [aut,cre]
-Maintainer: Kyle Stiers <kylestiers@gmail.com>
-Depends: R (>= 3.2.2)
-Description: This package defines two functions, and uses them to plot distributions, scatterplots, a heat map, and a biplot from PCA.
-License: MIT + file LICENSE
+Package: noobomics 
+Title: Simplified Exploratory Pairwise RNA and Proteomic Data Analysis 
+Version: 0.1 
+Author: Kyle Stiers 
+Maintainer: Kyle Stiers <kylestiers@gmail.com> 
+Description: This package defines two functions, and uses them to plot distributions, scatterplots, a heat map, and a biplot from PCA. 
+License: MIT 
