@@ -1,10 +1,10 @@
 # noobomics
-A very quick and unsophisticated approach to exploring RNAseq and Proteomic data to distill out hypothesis-driven candidates.
+<b>A very quick and unsophisticated approach to exploring RNAseq and Proteomic data to distill out hypothesis-driven candidates.</b>
 
 To install this package simply use devtools and install.github() as such:
 
-library(devtools)
-install_github("KyleStiers/noobomics/Desktop/noobomics/noobomics")
+<b><code>library(devtools)</code></b>
+<b><code>install_github("KyleStiers/noobomics/Desktop/noobomics/noobomics")</code></b>
 
 Prepare your data in excel or whatever you prefer. This package requires the frames be already sorted (Sort function in Excel) by ID - as long as they are treated the same the package will work. As of now IDs must match exactly to count, in the future I'll likely add some substring searching.
 
@@ -18,7 +18,7 @@ abcd, 2, 5, 7
 
 Then once you have your two dataframes (df1, df2) loaded in simply run:
 
-noobomics(df1, df2)
+<b><code>noobomics(df1, df2)</code></b>
 
 This will plot the log2() transformed data as density distributions, scatterplots with Pearson correlation coefficients, a heatmap (with default clustering), and finally the biplot of the Principal Component Analysis.
 
