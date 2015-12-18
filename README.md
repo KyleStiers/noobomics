@@ -3,7 +3,8 @@
 
 To install this package simply use devtools and install.github() as such:
 
-<b><code>library(devtools)
+<b><code>library(devtools)</b></code>
+<br>
 <b><code>install_github("KyleStiers/noobomics/Desktop/noobomics/noobomics")</code></b>
 
 Prepare your data in excel or whatever you prefer. This package requires the frames be already sorted (Sort function in Excel) by ID - as long as they are treated the same the package will work. As of now IDs must match exactly to count, in the future I'll likely add some substring searching.
