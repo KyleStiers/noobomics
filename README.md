@@ -19,7 +19,10 @@ abcd, 2, 5, 7
 
 Then once you have your two dataframes (df1, df2) loaded in simply run:
 
-<b><code>noobomics(df1, df2)</code></b>
+<b><code>noobomics(df1, df2)</code></b><br>
+or <br>
+<b><code>noobomics::noobomics(df1, df2)</code>
+
 
 This will plot the log2() transformed data as density distributions, scatterplots with Pearson correlation coefficients, a heatmap (with default clustering), and finally the biplot of the Principal Component Analysis.
 
